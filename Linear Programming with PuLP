@@ -1,0 +1,33 @@
+# product_mix_optimization.ipynb
+
+import pulp
+
+# Define the problem
+prob = pulp.LpProblem("Product Mix Optimization", pulp.LpMaximize)
+
+# Decision variables: quantities of products A and B (non-negative integers)
+x_A = pulp.LpVariable('Product_A', lowBound=0, cat='Continuous')
+x_B = pulp.LpVariable('Product_B', lowBound=0, cat='Continuous')
+
+# Objective function: maximize profit
+profit_A = 40
+profit_B = 35
+prob += profit_A * x_A + profit_B * x_B, "Total Profit"
+
+# Constraints:
+# Machine 1 time: 2*x_A + 1*x_B <= 100
+prob += 2 * x_A + 1 * x_B <= 100, "Machine_1_hours"
+
+# Machine 2 time: 1*x_A + 2*x_B <= 80
+prob += 1 * x_A + 2 * x_B <= 80, "Machine_2_hours"
+
+# Solve the problem
+prob.solve()
+
+# Print results
+print(f"Status: {pulp.LpStatus[prob.status]}")
+print(f"Produce {x_A.varValue:.2f} units of Product A")
+print(f"Produce {x_B.varValue:.2f} units of Product B")
+
+total_profit = pulp.value(prob.objective)
+print(f"Maximum Profit = ${total_profit:.2f}")
